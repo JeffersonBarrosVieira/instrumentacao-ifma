@@ -18,11 +18,11 @@ let velocitym = 0; // Velocidade inicial do bloco m
 let widthM = 150; // Largura do bloco M
 let heightM = 150; // Altura dos blocos
 
-let widthm = 50; // Largura do bloco m
-let heightm = 50; // Altura dos blocos
+let widthm = 150; // Largura do bloco m
+let heightm = 150; // Altura dos blocos
 
-let positionM = { x: canvas.width - 260, y: canvas.height - heightM }; // Posição inicial do bloco M
-let positionm = { x: canvas.width - 100, y: canvas.height - heightm };
+let positionM = { x: canvas.width - 350 - 10, y: canvas.height - heightM }; // Posição inicial do bloco M
+let positionm = { x: canvas.width - 200, y: canvas.height - heightm };
 
 // Coordenadas da parede
 const wallX = canvas.width - 30; // Posição x da parede
@@ -71,9 +71,9 @@ function updatePositions() {
     // Verificar se ocorreu a colisão entre os blocos
     if (positionM.x + widthM >= positionm.x) {
         // Trocar as velocidades após a colisão
+        velocityM = vFinalM;
+        velocitym = vFinalm;
         if(bloco == true){
-            velocityM = vFinalM;
-            velocitym = vFinalm;
             count += 1
             result.value = count
             bloco = false
@@ -120,11 +120,14 @@ function play() {
     // massM = 1*fatorvalue;
     result.value = 0
     count = 0
-
-    dt = 1/(300*Math.log(fator.value))
+    if (fator.value == 1){
+        dt = 1/(60)
+    } else {
+        dt = 1/(200*Math.log(fator.value))
+    }
     // reset
-    positionM.x = canvas.width - 260; // Posição inicial do bloco M
-    positionm.x = canvas.width - 100;
+    positionM.x = canvas.width - 350 - 10; // Posição inicial do bloco M
+    positionm.x = canvas.width - 200;
 
     velocityM = 100
     velocitym = 0
