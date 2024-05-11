@@ -1,29 +1,231 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulação</title>
-    <link rel="stylesheet" href="style/main.css">
+    <title>Simulação de Partícula em Movimento com Campo Elétrico</title>
 </head>
 
-<body>
-    <h2>Simulação de Colisão entre Blocos</h2>
-    <div class="rodar">
-        <label for="fator">Fator de (M/m): </label>
-        <input type="number" id="fator" value="1", min="1" max="10000" step="1">
-        <button onclick="play()">Play</button>
-    </div><br>
-    <div class="rodar">
-        <label for="result">Numero de colisões: </label>
-        <input type="number" id="result" value="0" disabled=''>
+<body style="border: 0; padding: 0; margin: 0;">
+    <div id="home" style="display: flex; flex-direction: column; padding: 20px 100px; align-items: center;">
+        <h2 style="text-align: center;">Ampola de Crookes</h2>
+        <canvas id="canvas" width="600" height="400" style="border: 1px solid black; width: 600px;"></canvas>
+        <div>
+            <label for="particleVelocity">Velocidade do Elétron:</label>
+            <input type="range" id="particleVelocity" min="1" max="10" step="1" value="4" />
+        </div>
+        <div>
+            <label for="electricFieldStrength">Intensidade do Campo Elétrico:</label>
+            <input type="range" id="electricFieldStrength" min="-0.1" max="0.1" step="0.01" value="0" />
+        </div>
+        <div>
+            <label for="emitRate">Taxa de Emissão de Elétrons:</label>
+            <input type="range" id="emitRate" min="1" max="10" step="1" value="1" />
+        </div>
+        <div>
+            <label for="dispBeam">Dispersão do Feixe:</label>
+            <input type="range" id="dispBeam" min="0" max="1" step="0.1" value="0" />
+        </div>
     </div>
-    <br>
-    <canvas id="canvas" width="800" height="400"></canvas>
-    <br>
-    <label>Copyright © 2024 Jefferson Barros Vieira</label>
-    <script src="js/main.js"></script>
+    <h3>Copyrigth © 2024 Jefferson Barros Vieira</h3>
+
+    <script>
+        // Obter o elemento canvas e o contexto 2d
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+
+        // Definir as propriedades das partículas
+        var particles = [];
+        var emitRate = 1; // Taxa de emissão de partículas por frame
+        var maxEmitRate = 10;
+
+        // Definir a força do campo elétrico vertical
+        var electricFieldStrength = 0;
+
+        // Definir a velocidade da partícula
+        var particleVelocity = 1;
+
+        // Definir a dispersão do feixe
+        var dispBeam = 0;
+
+        // Função para desenhar uma partícula
+        function drawParticle(particle) {
+            // Desenhar a partícula
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "blue";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        // Função para atualizar a posição de uma partícula
+        function updateParticle(particle) {
+            particle.x += particle.speedX;
+            particle.y += particle.speedY;
+
+            // Aplicar a força do campo elétrico apenas na metade da largura do canvas para frente
+            if (particle.x >= canvas.width / 3 && particle.x <= 2 * canvas.width / 3) {
+                // Acelera a particula verticalmente
+                particle.speedY += electricFieldStrength;
+
+                // Emitir radiação quando a partícula é acelerada
+                if (electricFieldStrength != 0) {
+                    emitRadiation(particle);
+                }
+            }
+
+            // Verificar colisão com as paredes
+            if (particle.x - particle.radius > canvas.width || particle.y + particle.radius > canvas.height || particle.y - particle.radius < 0) {
+                return false; // Remover a partícula se estiver fora do canvas
+            }
+
+            return true;
+        }
+
+        n_particles_per_emittance = 1
+        // Função para emitir partículas da fonte de emissão à esquerda
+        function emitParticles() {
+            for (var i = 0; i < n_particles_per_emittance; i++) {
+                var particle = {
+                    x: 0,
+                    // y: Math.random() * canvas.height,
+                    y: canvas.height / 2,
+                    radius: 5,
+                    // speedX: Math.random() * 2 + 1,
+                    speedX: particleVelocity,
+                    speedY: (Math.random() * 2 - 1) * dispBeam
+                };
+                particles.push(particle);
+            }
+        }
+
+        // Função para atualizar e desenhar os pulsos de radiação
+        function updateRadiations() {
+            for (var i = 0; i < radiations.length; i++) {
+                var pulse = radiations[i];
+                pulse.time += 1; // Incrementar o tempo para deslocar o pulso
+
+                // Calcular a posição vertical do pulso usando uma função seno
+                pulse.x += pulse.speedX
+
+                // Desenhar o pulso de radiação como uma linha vertical
+                ctx.beginPath();
+                ctx.moveTo(pulse.x, pulse.y - pulse.amplitude / 2);
+                ctx.lineTo(pulse.x, pulse.y + pulse.amplitude / 2);
+                ctx.strokeStyle = "green";
+                ctx.stroke();
+
+                // Remover o pulso de radiação quando ultrapassar o limite de visualização
+                if (pulse.time * pulse.frequency > 2 * Math.PI) {
+                    radiations.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        var radiations = []
+        // emitir um pulso
+        function emitRadiationPulse(particle) {
+            var amplitude = 1000 * electricFieldStrength;
+            var pulse = {
+                x: particle.x,
+                y: particle.y,
+                speedX: 11,
+                speedY: 0,
+                amplitude: amplitude, // Amplitude do pulso de radiação
+                wavelength: 100, // Comprimento de onda do pulso de radiação
+                frequency: 0.08, // Frequência do pulso de radiação
+                time: 0 // Tempo inicial do pulso de radiação
+            };
+            radiations.push(pulse);
+        }
+
+        // Função para emitir radiação quando uma partícula é acelerada
+        function emitRadiation(particle) {
+            emitRadiationPulse(particle);
+        }
+
+        // Função para atualizar a velocidade da particula com base na entrada do usuário
+        document.getElementById("particleVelocity").addEventListener("input", function () {
+            particleVelocity = parseFloat(this.value);
+        });
+
+        // Função para atualizar a dispersão do feixe com base na entrada do usuário
+        document.getElementById("dispBeam").addEventListener("input", function () {
+            dispBeam = parseFloat(this.value);
+        });
+
+        // Função para atualizar a força do campo elétrico com base na entrada do usuário
+        document.getElementById("electricFieldStrength").addEventListener("input", function () {
+            electricFieldStrength = parseFloat(this.value);
+        });
+
+        // Função para atualizar a taxa de emissão de partículas com base na entrada do usuário
+        document.getElementById("emitRate").addEventListener("input", function () {
+            emitRate = parseInt(this.value);
+            maxEmitRate = parseInt(this.max);
+        });
+
+        dt = 16 // 16 milissegundos 60 fps
+        t = 0
+        // Função principal de animação
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateFieldColor();
+            updateRadiations();
+            for (var i = 0; i < particles.length; i++) {
+                var particle = particles[i];
+                if (!updateParticle(particle)) {
+                    particles.splice(i, 1); // Remover a partícula se estiver fora do canvas
+                    i--;
+                } else {
+                    drawParticle(particle);
+                }
+            }
+
+            if (t % (8 * dt * (maxEmitRate - emitRate + 1)) == 0) {
+                emitParticles()
+            }
+
+            setTimeout(animate, dt)
+            // requestAnimationFrame(animate);
+            t += dt
+
+        }
+
+        // Função para atualizar a cor da região com campo elétrico de acordo com a intensidade
+        function updateFieldColor() {
+            var intensity = Math.abs(electricFieldStrength) * 10; // Converter a intensidade para um valor entre 0 e 10
+
+            var thickness = canvas.height / 10;
+
+            // Polo de cima do campo elétrico
+            var color = 'rgba(' + 255 * (1 - electricFieldStrength * 10) / 2 + ',0,' + 255 * (1 + electricFieldStrength * 10) / 2 + ',' + intensity / 2 + ')'; // Cor varia de azul (menor intensidade) para vermelho (maior intensidade)
+            ctx.fillStyle = color;
+            ctx.fillRect(canvas.width / 3, 0, 1 * canvas.width / 3, thickness);
+
+            // Desenhar o texto dentro do retângulo
+            ctx.fillStyle = 'rgba(0, 0, 0,' + intensity / 2 + ')';
+            ctx.font = "20px Arial";
+            ctx.fillText((-electricFieldStrength > 0 ? '+' : '-'), canvas.width / 2, thickness / 2 + 7); // Adicionar o texto + ou - no centro do retângulo
+
+            // Polo de baixo do campo elétrico
+            color = 'rgba(' + 255 * (1 + electricFieldStrength * 10) / 2 + ',0,' + 255 * (1 - electricFieldStrength * 10) / 2 + ',' + intensity / 2 + ')'; // Cor varia de azul (menor intensidade) para vermelho (maior intensidade)
+            ctx.fillStyle = color;
+            ctx.fillRect(canvas.width / 3, canvas.height - thickness, 1 * canvas.width / 3, thickness);
+
+            // Desenhar o texto dentro do retângulo
+            ctx.fillStyle = 'rgba(0, 0, 0,' + intensity / 2 + ')';
+            ctx.font = "20px Arial";
+            ctx.fillText((electricFieldStrength > 0 ? '+' : '-'), canvas.width / 2, canvas.height - thickness / 2 + 7); // Adicionar o texto + ou - no centro do retângulo
+
+        }
+
+        // Iniciar a animação
+        animate();
+        updateFieldColor();
+    </script>
 </body>
 
 </html>

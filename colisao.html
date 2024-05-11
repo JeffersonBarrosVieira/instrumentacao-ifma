@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação</title>
+    <link rel="stylesheet" href="style/main.css">
+</head>
+
+<body>
+    <h2>Simulação de Colisão entre Blocos</h2>
+    <div class="rodar">
+        <label for="fator">Fator de (M/m): </label>
+        <input type="number" id="fator" value="1", min="1" max="10000" step="1">
+        <button onclick="play()">Play</button>
+    </div><br>
+    <div class="rodar">
+        <label for="result">Numero de colisões: </label>
+        <input type="number" id="result" value="0" disabled=''>
+    </div>
+    <br>
+    <canvas id="canvas" width="800" height="400"></canvas>
+    <br>
+    <label>Copyright © 2024 Jefferson Barros Vieira</label>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
