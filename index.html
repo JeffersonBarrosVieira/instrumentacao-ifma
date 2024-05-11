@@ -8,7 +8,7 @@
 </head>
 
 <body style="border: 0; padding: 0; margin: 0;">
-    <div id="home" style="display: flex; flex-direction: column; padding: 20px 100px; align-items: center;">
+    <div id="home" style="display: flex; flex-direction: column; padding: 20px 20px; align-items: center;">
         <h2 style="text-align: center;">Ampola de Crookes</h2>
         <canvas id="canvas" width="500" height="400" style="border: 1px solid black;"></canvas>
         <div>
@@ -17,7 +17,7 @@
         </div>
         <div>
             <label for="electricFieldStrength">Intensidade do Campo Elétrico:</label>
-            <input type="range" id="electricFieldStrength" min="-0.1" max="0.1" step="0.01" value="0" />
+            <input type="range" id="electricFieldStrength" min="-0.1" max="0.1" step="0.005" value="0" />
         </div>
         <div>
             <label for="emitRate">Taxa de Emissão de Elétrons:</label>
@@ -27,8 +27,18 @@
             <label for="dispBeam">Dispersão do Feixe:</label>
             <input type="range" id="dispBeam" min="0" max="1" step="0.1" value="0" />
         </div>
+        <div style="text-align: justify; width: 100%;">
+            <br>
+            Nota da Radiação Emitida: 
+            <br>
+            - Riscos Verde: São as frentes de ondas da radiação;
+            <br>
+            - Distancia entre o risco: comprimento de onda da radiação;
+            <br>
+            - Largura do risco: Intensidade da Radiação
+        </div>
     </div>
-    <h3>Copyrigth © 2024 Jefferson Barros Vieira</h3>
+    <h3 style="padding: 0 20px;">Copyrigth © 2024 Jefferson Barros Vieira</h3>
 
     <script>
         // Obter o elemento canvas e o contexto 2d
