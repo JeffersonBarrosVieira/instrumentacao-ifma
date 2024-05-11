@@ -10,7 +10,7 @@
 <body style="border: 0; padding: 0; margin: 0;">
     <div id="home" style="display: flex; flex-direction: column; padding: 20px 100px; align-items: center;">
         <h2 style="text-align: center;">Ampola de Crookes</h2>
-        <canvas id="canvas" width="600" height="400" style="border: 1px solid black; width: calc(100vw - 20px);"></canvas>
+        <canvas id="canvas" width="500" height="400" style="border: 1px solid black;"></canvas>
         <div>
             <label for="particleVelocity">Velocidade do Elétron:</label>
             <input type="range" id="particleVelocity" min="1" max="10" step="1" value="1" />
@@ -116,8 +116,8 @@
                 ctx.strokeStyle = "green";
                 ctx.stroke();
 
-                // Remover o pulso de radiação quando ultrapassar o limite de visualização
-                if (pulse.time * pulse.frequency > 2 * Math.PI) {
+                if (pulse.x > canvas.width) {
+                    // console.log(pulse.wavelength)
                     radiations.splice(i, 1);
                     i--;
                 }
@@ -134,7 +134,7 @@
                 speedX: 11,
                 speedY: 0,
                 amplitude: amplitude, // Amplitude do pulso de radiação
-                wavelength: 100, // Comprimento de onda do pulso de radiação
+                wavelength: 11 - particle.speedX, // Comprimento de onda do pulso de radiação
                 frequency: 0.08, // Frequência do pulso de radiação
                 time: 0 // Tempo inicial do pulso de radiação
             };
@@ -201,22 +201,22 @@
             var thickness = canvas.height / 10;
 
             // Polo de cima do campo elétrico
-            var color = 'rgba(' + 255 * (1 - electricFieldStrength * 10) / 2 + ',0,' + 255 * (1 + electricFieldStrength * 10) / 2 + ',' + intensity / 2 + ')'; // Cor varia de azul (menor intensidade) para vermelho (maior intensidade)
+            var color = 'rgba(' + 255 * (1 - electricFieldStrength * 10) / 2 + ',0,' + 255 * (1 + electricFieldStrength * 10) / 2 + ',' + Math.sqrt(intensity / 2) + ')'; // Cor varia de azul (menor intensidade) para vermelho (maior intensidade)
             ctx.fillStyle = color;
             ctx.fillRect(canvas.width / 3, 0, 1 * canvas.width / 3, thickness);
 
             // Desenhar o texto dentro do retângulo
-            ctx.fillStyle = 'rgba(0, 0, 0,' + intensity / 2 + ')';
+            ctx.fillStyle = 'rgba(0, 0, 0,' + Math.sqrt(intensity / 2) + ')';
             ctx.font = "20px Arial";
             ctx.fillText((-electricFieldStrength > 0 ? '+' : '-'), canvas.width / 2, thickness / 2 + 7); // Adicionar o texto + ou - no centro do retângulo
 
             // Polo de baixo do campo elétrico
-            color = 'rgba(' + 255 * (1 + electricFieldStrength * 10) / 2 + ',0,' + 255 * (1 - electricFieldStrength * 10) / 2 + ',' + intensity / 2 + ')'; // Cor varia de azul (menor intensidade) para vermelho (maior intensidade)
+            color = 'rgba(' + 255 * (1 + electricFieldStrength * 10) / 2 + ',0,' + 255 * (1 - electricFieldStrength * 10) / 2 + ',' + Math.sqrt(intensity / 2) + ')'; // Cor varia de azul (menor intensidade) para vermelho (maior intensidade)
             ctx.fillStyle = color;
             ctx.fillRect(canvas.width / 3, canvas.height - thickness, 1 * canvas.width / 3, thickness);
 
             // Desenhar o texto dentro do retângulo
-            ctx.fillStyle = 'rgba(0, 0, 0,' + intensity / 2 + ')';
+            ctx.fillStyle = 'rgba(0, 0, 0,' + Math.sqrt(intensity / 2) + ')';
             ctx.font = "20px Arial";
             ctx.fillText((electricFieldStrength > 0 ? '+' : '-'), canvas.width / 2, canvas.height - thickness / 2 + 7); // Adicionar o texto + ou - no centro do retângulo
 
